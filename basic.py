@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import torch
 from torch import nn
 from pytorch_lightning.core.lightning import LightningModule
@@ -8,6 +10,7 @@ from pytorch_metric_learning import losses, samplers
 from torchvision import datasets, transforms, models
 from torch.utils.data import random_split, Dataset
 import optuna
+from infilling import Inpainter
 
 import pytorch_lightning as pl
 from argparse import ArgumentParser
@@ -54,6 +57,25 @@ class Basic(LightningModule):
     
     def training_step(self, batch, batch_idx):
         inputs, labels = batch
+        
+        # location = [(a,b) for a in range(255) for b in range(255)]
+        # small_mask = Image.new('L', (4, 4), 0)
+        # masks = []
+        # for _ in range(32):
+        #     base = Image.new('L',(256,256),255)
+        #     r = random.choice(location)
+        #     base.paste(small_mask, r)
+        #     location.pop(location.index(r))
+        #     base = np.ascontiguousarray(np.expand_dims(base, 0)).astype(np.uint8)
+        #     masks.append(base)
+        # masks = np.array(masks)
+        # masks = torch.from_numpy(masks)
+
+        # pretrained_model_path = '/lab/vislab/DATA/just/infilling/model/model_places2.pth'
+        # inpainter = Inpainter(pretrained_model_path, 256, 32)
+        # inpainted_img_batch = inpainter.inpaint(inputs, masks)
+
+
         outputs = self(inputs)
         loss = self.loss(outputs, labels)
         return {'loss': loss}
