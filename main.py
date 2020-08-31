@@ -12,19 +12,6 @@ import argparse
 def objective(trial):
     metrics_callback = MetricCallback()
 
-    # # eval step first on pretrained resnet only 
-    # evaluating = pl.Trainer(
-    #     max_epochs=1,
-    #     gpus=[1] if torch.cuda.is_available() else None,
-    #     callbacks=[metrics_callback],
-    # )
-    # hparams = {
-    #     'lr': trial.suggest_float("lr", 0.0006, 0.0008)
-    # }
-    # model = Basic(hparams, trial)
-    # evaluating.test(model)
-    # print("Done with pre-evaluation ...")
-
     trainer = pl.Trainer(
         max_epochs=50,
         num_sanity_val_steps=-1,
@@ -32,7 +19,8 @@ def objective(trial):
         callbacks=[metrics_callback],
     )
     hparams = {
-        'lr': trial.suggest_float("lr", 0.0006, 0.0008)
+        'lr': trial.suggest_float("lr", 0.0006, 0.0008), 
+        'mask_size_suggestion': trial.suggest_int("mask_size_suggestion", 4, 50)
     }
 
     model = Basic(hparams, trial)
